@@ -1,14 +1,8 @@
-/*
- * http://www.geekfactory.mx
- * 
+/* 
  * Ejemplo de medidor de luz con Arduino utilizando una fotoresistencia LDR y
  * un grupo de leds para mostrar el resultado de las lecturas. Este sketch puede
  * servir como base para otros proyectos que requieren medicion de la intensidad
  * de luz con una fotoresistencia.
- *
- * Mas detalles y la conexion completa para este sketch en:
- * http://www.geekfactory.mx/tutoriales/tutoriales-arduino/tutorial-arduino-con-fotoresistencia-ldr/
- *
  */
 
 // Pin donde se conectan los leds
