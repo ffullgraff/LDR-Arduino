@@ -7,12 +7,6 @@
  I'm using a TV anetenna to send a output to the RCA remote antenna rotator.
  This way I don't have to purchase a relay controller.
  
- created 28 Jul 2012
- By David A Smith
- modified 20 May 2013
- By Cory Oberdas, Brian T
- 
-  
  This code is in the public domain.
  
  */
