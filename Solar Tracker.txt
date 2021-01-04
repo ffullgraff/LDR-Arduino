@@ -1,0 +1,119 @@
+/*
+  Solar Tracker
+ 
+ Uses 2 photoresistors to track the suns movement.
+ The microcontroller evaluates the photoresistor values and
+ drives the appropriate positioning motor for correct alignment.
+ I'm using a TV anetenna to send a output to the RCA remote antenna rotator.
+ This way I don't have to purchase a relay controller.
+ 
+ created 28 Jul 2012
+ By David A Smith
+ modified 20 May 2013
+ By Cory Oberdas, Brian T
+ 
+  
+ This code is in the public domain.
+ 
+ */
+
+// These constants won't change:
+const int sensorPinA0 = A0;    // pin that the Left sensor is attached to
+const int sensorPinA5 = A5;    // pin that the Right sensor is attached to
+const int pmotorPinA0 = 11;    // pin that the pan motor relay is attached to left
+const int pmotorPinA5 = 10;    // pin that the pan motor relay is attached to right
+
+// variables:
+int sensorValueA0 = 0;         // Left photoresistor
+int sensorValueA5 = 0;         // Right photoresistor
+int tolerance = 15; /* +/- the total difference 
+between the two photoresistors. You can test 
+this by covering both the resistors in total darkness, 
+and note the difference between the two readings. */
+
+int panDelay = 300;           // The amount of time the pan motor will run
+int darkSensorReading = 10;    // The max value of the sensors to determine if it is night. 
+int darkReadingCount = 0;     // The Count of the number of consecutive dark/night readings.
+
+
+void setup() {
+  
+                              // Send debugging information via the Serial monitor
+  Serial.begin(9600);
+    
+                              //Assign and set motor driver pins to low
+pinMode(11, OUTPUT);
+pinMode(10, OUTPUT);
+    digitalWrite(11, HIGH);
+    digitalWrite(10, HIGH);
+}
+
+void loop() {
+  // read the sensor:
+  sensorValueA0 = analogRead(sensorPinA0);
+  sensorValueA5 = analogRead(sensorPinA5);
+
+digitalWrite(11, HIGH);
+digitalWrite(10, HIGH);
+
+                            // Compare sensor readings and drive pan motor left or right
+                            // If the sensor values are equal (what we want) it will skip adjusting the pan motor
+    /*
+    // Pan Right
+    if (sensorValueA0 > sensorValueA5 + tolerance){
+      digitalWrite(11, LOW);
+      delay(panDelay);
+      digitalWrite(11, HIGH);
+    }
+    // Pan Left
+    if (sensorValueA0 + tolerance < sensorValueA5){
+      digitalWrite(10, LOW);
+      delay(panDelay);
+      digitalWrite(10, HIGH);
+    }
+    */
+    
+    //--Start Brian Code
+    //Is it night?
+    if(sensorValueA0 <= darkSensorReading && sensorValueA5 <= darkSensorReading){
+      //must be night.
+      darkReadingCount += 1;
+      if(darkReadingCount > 60){  //If program delay is 60,000 then this is 1 hour at 60.
+        //advance left little by little to prepare for morning.
+        digitalWrite(11, LOW);
+        delay(panDelay * 3);
+        digitalWrite(11, HIGH);
+      }
+    } else {
+      //not night
+      darkReadingCount = 0;
+      //For Panning, What is the diference betweend the sensors?
+      int readSensorsDelta = (sensorValueA0 - sensorValueA5);
+      //Is absolute value greater than out tolerance?
+      if(abs(readSensorsDelta) > tolerance){
+        //We need to move, now which way(negative or positive delta)?
+        if(readSensorsDelta > 0){
+          //left sensor is higher, pan left to bring right into more light.
+          digitalWrite(11, LOW);
+          delay(panDelay);
+          digitalWrite(11, HIGH);
+        }else{
+          //right sensor is higher, pan right to bring left into more light.
+          digitalWrite(10, LOW);
+          delay(panDelay);
+          digitalWrite(10, HIGH);
+        }  
+      }
+    }
+    //--End Brian Code
+    
+    
+ 
+                             //Print debugging information
+  Serial.print("Left reading = ");
+  Serial.println(sensorValueA0);     // the left sensor analog reading
+  Serial.print("Right reading = ");
+  Serial.println(sensorValueA5);     // the right sensor analog reading
+  
+  delay(1000);
+}
