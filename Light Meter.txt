@@ -1,7 +1,6 @@
 // Light meter
 // 12K resistor connected between A0 pin and GND
 // Photoresistor connected between A0 and VCC 3.3V
-//https://gist.github.com/embeddeduser/feab7144aceeabb6a9aa4e5862b92c75
 
 #include "U8glib.h"
 
