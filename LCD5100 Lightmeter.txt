@@ -1,0 +1,62 @@
+    /////////////////////////////////////////////////////////////////
+   //             Arduino Photoresistor Tutorial           v1.01  //
+  //       Get the latest version of the code here:              //
+ //      http://educ8s.tv/arduino-photoresistor-tutorial        //
+/////////////////////////////////////////////////////////////////
+
+#include <LCD5110_Graph.h>
+
+LCD5110 myGLCD(8,9,10,12,11);
+
+extern unsigned char SmallFont[];
+extern unsigned char TinyFont[];
+
+int LDRpin = 13;
+char lightString [4];
+String str; 
+
+int lightIntensity = 0;
+
+void setup()
+{
+  myGLCD.InitLCD();
+  myGLCD.setFont(SmallFont);
+  randomSeed(analogRead(7));
+}
+
+void loop()
+{
+  myGLCD.clrScr();
+  myGLCD.update();
+  
+  lightIntensity = analogRead(LDRpin);
+  
+  lightIntensity = map(lightIntensity, 1050, 20, 0, 100);
+
+  str = String(lightIntensity)+"%";
+  str.toCharArray(lightString,4);
+  
+  myGLCD.print("LIGHT METER",CENTER,0);
+  myGLCD.print(lightString,CENTER,20); 
+  
+  printBar();
+  fillBar(lightIntensity);
+  
+  myGLCD.update();  
+  delay(100);
+}
+
+void printBar()
+{  
+  myGLCD.drawRect(2, 35, 81, 40);
+  myGLCD.update(); 
+}
+
+void fillBar(int percent)
+{
+    percent = map(percent,0,100,2,81);     
+    myGLCD.drawLine(2, 36, percent, 36);
+    myGLCD.drawLine(2, 37, percent, 37);
+    myGLCD.drawLine(2, 38, percent, 38);
+    myGLCD.drawLine(2, 39, percent, 39);
+}
